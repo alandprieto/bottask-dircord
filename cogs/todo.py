@@ -30,7 +30,6 @@ class TodoCog(commands.Cog):
         await interaction.response.send_message(
             f"Tarea '{tarea}' añadida correctamente.", ephemeral=True
         )
-        pass
 
     @app_commands.command(name="listar", description="Lista todas las tareas")
     async def listar_tareas(self, interaction: discord.Interaction):
@@ -43,7 +42,8 @@ class TodoCog(commands.Cog):
         mensaje = "Tareas pendientes:\n"
         for tarea in tareas:
             mensaje += (
-                f"**{tarea[1]}** (ID: {tarea[0]}) - *{tarea[3]}*\n> {tarea[2]}\n\n"
+                f"**{tarea['name']}** (ID: {tarea['id']}) - *{tarea['state_name']}*\n"
+                f"> {tarea['description']}\n\n"
             )
         await interaction.response.send_message(mensaje)
 
@@ -90,7 +90,7 @@ class TodoCog(commands.Cog):
         nuevo_estado: app_commands.Choice[int],
     ):
         filas = manager.change_state(
-            tarea_id, nuevo_estado.value, interaction.channel_id
+            nuevo_estado.value, tarea_id, interaction.channel_id
         )
         if filas > 0:
             await interaction.response.send_message(
